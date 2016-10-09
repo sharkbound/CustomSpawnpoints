@@ -9,6 +9,7 @@ using SDG.Unturned;
 using Rocket.Unturned.Events;
 using System.Threading;
 using Rocket.Unturned.Player;
+using Rocket.Core.Commands;
 
 namespace CustomSpawnpoints
 {
@@ -53,7 +54,7 @@ namespace CustomSpawnpoints
 
                 if (Configuration.Instance.RandomlySelectSpawnPoint)
                 {
-                    teleportPlayerRandom(player);
+                    teleportPlayerRandom(player, getSpawnsPlayerCanUse(player));
                 }
                 else
                 {
@@ -82,6 +83,21 @@ namespace CustomSpawnpoints
             UnturnedPlayerEvents.OnPlayerRevive -= UnturnedPlayerEvents_OnPlayerRevive;
         }
 
+        List<SpawnPoint> getSpawnsPlayerCanUse(UnturnedPlayer p)
+        {
+            List<SpawnPoint> spawnsPLayerCanUse = new List<SpawnPoint>();
+            
+            foreach (var spawn in Configuration.Instance.Spawns.SavedSpawnPoints)
+            {
+                if (p.HasPermission("spawn.all") || p.HasPermission("spawn." + spawn.name))
+                {
+                    spawnsPLayerCanUse.Add(spawn);
+                }
+            }
+
+            return spawnsPLayerCanUse;
+        }
+
         void teleportPlayer(UnturnedPlayer P)
         {
             if (AllCustomSpawns.SavedSpawnPoints[0].Rotation != 0)
@@ -105,12 +121,13 @@ namespace CustomSpawnpoints
             }
         }
 
-        void teleportPlayerRandom(UnturnedPlayer P)
+        void teleportPlayerRandom(UnturnedPlayer P, List<SpawnPoint> spawns)
         {
-            SpawnPoint Randompoint = getRandomSpawn();
+            if (spawns.Count == 0) return;
+
+            SpawnPoint Randompoint = getRandomSpawn(spawns);
             if (Randompoint.Rotation != 0)
             {
-
                 P.Teleport(new UnityEngine.Vector3
                 {
                     x = Randompoint.x,
@@ -129,11 +146,25 @@ namespace CustomSpawnpoints
             }
         }
 
-        SpawnPoint getRandomSpawn()
+        SpawnPoint getRandomSpawn(List<SpawnPoint> list)
         {
             Random r = new Random();
-            return AllCustomSpawns.SavedSpawnPoints[r.Next(AllCustomSpawns.SavedSpawnPoints.Count)]; //The return range for random.next doesnt
+            return list[r.Next(list.Count)]; //The return range for random.next doesnt
             // include the max value, but it does include the minimum value, so if i enter r.Next(0,4) it can return a value between 0-3
         }
+
+        /*
+        [RocketCommand("sim", "", "", Rocket.API.AllowedCaller.Player)]
+        [RocketCommandPermission("sim")]
+        public void SimulateSpawn(IRocketPlayer p, string[] para)
+        {
+            var spawns = getSpawnsPlayerCanUse((UnturnedPlayer)p);
+            foreach (var spawn in spawns)
+            {
+                Rocket.Unturned.Chat.UnturnedChat.Say(p, string.Format("spawn found: {0}", spawn.name));
+            }
+
+            Rocket.Unturned.Chat.UnturnedChat.Say(p, string.Format("randon spawn selected: {0}", getRandomSpawn(spawns).name));
+        }*/
     }
 }
