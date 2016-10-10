@@ -37,7 +37,7 @@ namespace CustomSpawnpoints
                     {"removed_spawn", "Removed spawn '{0}'."},
                     {"spawn_not_found", "There is not any spawns by the name '{0}'"},
                     {"list", "Name: {0}, X: {1}, Y: {2}, Z:{3}"},
-                    {"wrong_usage", "Incorrect usage! Correct usage: <add || remove || list> (spawn name)"},
+                    {"wrong_usage", "Incorrect usage! Correct usage: <add || remove || list> [spawn name]"},
                     {"no_spawns", "No custom spawn points found!"}
                 };
             }

@@ -140,7 +140,7 @@ namespace CustomSpawnpoints
 
         public string Syntax
         {
-            get { return "[add || remove || list] (spawn point name)"; }
+            get { return "<add || remove || list> [spawn point name]"; }
         }
     }
 }
