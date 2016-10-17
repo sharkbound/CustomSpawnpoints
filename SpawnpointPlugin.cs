@@ -36,7 +36,7 @@ namespace CustomSpawnpoints
                     {"spawn_already_exist", "A spawn by the name '{0}' already exist!"},
                     {"removed_spawn", "Removed spawn '{0}'."},
                     {"spawn_not_found", "There is not any spawns by the name '{0}'"},
-                    {"list", "Name: {0}, X: {1}, Y: {2}, Z:{3}"},
+                    {"list", "Name: {0}, X: {1}, Y: {2}, Z: {3}"},
                     {"wrong_usage", "Incorrect usage! Correct usage: <add || remove || list> [spawn name]"},
                     {"no_spawns", "No custom spawn points found!"}
                 };
@@ -48,17 +48,23 @@ namespace CustomSpawnpoints
             if (Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0 || !Configuration.Instance.Enabled) return;
             new Thread(() =>
             {
+                var accessableSpawns = getSpawnsPlayerCanUse(player);
+                if (accessableSpawns.Count == 0)
+                {
+                    return;
+                }
+
                 setGodmode(false, player);
                 Thread.Sleep(Configuration.Instance.TeleportDelay);
                 setGodmode(true, player);
 
                 if (Configuration.Instance.RandomlySelectSpawnPoint)
                 {
-                    teleportPlayerRandom(player, getSpawnsPlayerCanUse(player));
+                    teleportPlayerRandom(player, accessableSpawns);
                 }
                 else
                 {
-                    teleportPlayer(player);
+                    teleportPlayer(player, accessableSpawns[0]);
                 }
             }
             ).Start();
@@ -85,38 +91,37 @@ namespace CustomSpawnpoints
 
         List<SpawnPoint> getSpawnsPlayerCanUse(UnturnedPlayer p)
         {
-            List<SpawnPoint> spawnsPLayerCanUse = new List<SpawnPoint>();
+            List<SpawnPoint> spawnsPlayerCanUse = new List<SpawnPoint>();
             
             foreach (var spawn in Configuration.Instance.Spawns.SavedSpawnPoints)
             {
                 if (p.HasPermission("spawn.all") || p.HasPermission("spawn." + spawn.name))
                 {
-                    spawnsPLayerCanUse.Add(spawn);
+                    spawnsPlayerCanUse.Add(spawn);
                 }
             }
 
-            return spawnsPLayerCanUse;
+            return spawnsPlayerCanUse;
         }
 
-        void teleportPlayer(UnturnedPlayer P)
+        void teleportPlayer(UnturnedPlayer P, SpawnPoint spawn)
         {
             if (AllCustomSpawns.SavedSpawnPoints[0].Rotation != 0)
             {
-
                 P.Teleport(new UnityEngine.Vector3
                 {
-                    x = AllCustomSpawns.SavedSpawnPoints[0].x,
-                    y = AllCustomSpawns.SavedSpawnPoints[0].y,
-                    z = AllCustomSpawns.SavedSpawnPoints[0].z
-                }, AllCustomSpawns.SavedSpawnPoints[0].Rotation);
+                    x = spawn.x,
+                    y = spawn.y,
+                    z = spawn.z
+                }, spawn.Rotation);
             }
             else
             {
                 P.Teleport(new UnityEngine.Vector3
                 {
-                    x = AllCustomSpawns.SavedSpawnPoints[0].x,
-                    y = AllCustomSpawns.SavedSpawnPoints[0].y,
-                    z = AllCustomSpawns.SavedSpawnPoints[0].z
+                    x = spawn.x,
+                    y = spawn.y,
+                    z = spawn.z
                 }, P.Rotation);
             }
         }
