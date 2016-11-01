@@ -10,6 +10,7 @@ using Rocket.Unturned.Events;
 using System.Threading;
 using Rocket.Unturned.Player;
 using Rocket.Core.Commands;
+using Steamworks;
 
 namespace CustomSpawnpoints
 {
@@ -38,6 +39,7 @@ namespace CustomSpawnpoints
                     {"spawn_not_found", "There is not any spawns by the name '{0}'"},
                     {"list", "Name: {0}, X: {1}, Y: {2}, Z: {3}"},
                     {"wrong_usage", "Incorrect usage! Correct usage: <add || remove || list> [spawn name]"},
+                    {"teleport_spawn", "Teleported to spawn {0}!"},
                     {"no_spawns", "No custom spawn points found!"}
                 };
             }
@@ -48,38 +50,66 @@ namespace CustomSpawnpoints
             if (Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0 || !Configuration.Instance.Enabled) return;
             new Thread(() =>
             {
-                var accessableSpawns = getSpawnsPlayerCanUse(player);
-                if (accessableSpawns.Count == 0)
+                UnityEngine.Vector3 bedVector3;
+                byte bedAngle;
+                if (Configuration.Instance.PrioritizeBeds && hasBed(player.CSteamID, out bedVector3, out bedAngle))
                 {
-                    return;
-                }
-
-                setGodmode(false, player);
-                Thread.Sleep(Configuration.Instance.TeleportDelay);
-                setGodmode(true, player);
-
-                if (Configuration.Instance.RandomlySelectSpawnPoint)
-                {
-                    teleportPlayerRandom(player, accessableSpawns);
+                    teleportToBed(player, bedVector3, bedAngle);
                 }
                 else
                 {
-                    teleportPlayer(player, accessableSpawns[0]);
+                    teleportPlayerToSpawn(player);
                 }
             }
             ).Start();
         }
 
-        void setGodmode(bool alreadyHasGodmode, UnturnedPlayer pl)
+        bool hasBed(CSteamID PlayerID, out UnityEngine.Vector3 Point, out byte angle)
         {
-            if (!Configuration.Instance.GiveGodModeOnRespawnUntilTeleport) return;
-            if (alreadyHasGodmode)
+            return BarricadeManager.tryGetBed(PlayerID, out Point, out angle);
+        }
+
+        void teleportToBed(UnturnedPlayer player, UnityEngine.Vector3 bedPoint, byte bedAngle)
+        {
+            setGodmode(true, player);
+            Thread.Sleep(Configuration.Instance.TeleportDelay);
+            setGodmode(false, player);
+
+            player.Teleport(bedPoint, bedAngle);
+        }
+
+        void teleportPlayerToSpawn(UnturnedPlayer player)
+        {
+            var accessableSpawns = getSpawnsPlayerCanUse(player);
+            if (accessableSpawns.Count == 0)
             {
-                pl.Features.GodMode = false;
+                return;
+            }
+
+            setGodmode(true, player);
+            Thread.Sleep(Configuration.Instance.TeleportDelay);
+            setGodmode(false, player);
+
+            if (Configuration.Instance.RandomlySelectSpawnPoint)
+            {
+                teleportPlayerRandom(player, accessableSpawns);
             }
             else
             {
+                teleportPlayer(player, accessableSpawns[0]);
+            }
+        }
+
+        void setGodmode(bool enableGod, UnturnedPlayer pl)
+        {
+            if (!Configuration.Instance.GiveGodModeOnRespawnUntilTeleport) return;
+            if (enableGod)
+            {
                 pl.Features.GodMode = true;
+            }
+            else
+            {
+                pl.Features.GodMode = false;
             }
         }
 
