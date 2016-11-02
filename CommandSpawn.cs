@@ -168,7 +168,7 @@ namespace CustomSpawnpoints
             var spawnVector = new UnityEngine.Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z);
 
             uCaller.Teleport(spawnVector, spawnpoint.Rotation);
-            UnturnedChat.Say(SpawnpointPlugin.Instance.Translate("teleport_spawn", spawnpoint.name));
+            UnturnedChat.Say(uCaller, SpawnpointPlugin.Instance.Translate("teleport_spawn", spawnpoint.name));
         }
         #endregion
 
