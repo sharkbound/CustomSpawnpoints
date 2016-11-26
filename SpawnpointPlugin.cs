@@ -125,7 +125,7 @@ namespace CustomSpawnpoints
             
             foreach (var spawn in Configuration.Instance.Spawns.SavedSpawnPoints)
             {
-                if (p.HasPermission("spawn.all") || p.HasPermission("spawn." + spawn.name))
+                if (p.HasPermission("spawnpoint.all") || p.HasPermission("spawnpoint." + spawn.name))
                 {
                     spawnsPlayerCanUse.Add(spawn);
                 }
