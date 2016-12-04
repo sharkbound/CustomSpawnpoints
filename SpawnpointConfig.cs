@@ -13,6 +13,8 @@ namespace CustomSpawnpoints
         public bool GiveGodModeOnRespawnUntilTeleport;
         public bool RandomlySelectSpawnPoint;
         public bool PrioritizeBeds;
+        public bool PrioritySpawnpointEnabled;
+        public string PrioritySpawnName;
         public int TeleportDelay;
         public SpawnPoints Spawns;
 
@@ -22,6 +24,8 @@ namespace CustomSpawnpoints
             GiveGodModeOnRespawnUntilTeleport = true;
             RandomlySelectSpawnPoint = true;
             PrioritizeBeds = true;
+            PrioritySpawnpointEnabled = false;
+            PrioritySpawnName = "default";
             TeleportDelay = 1000;
             Spawns = new SpawnPoints();
         }

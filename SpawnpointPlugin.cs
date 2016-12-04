@@ -27,6 +27,12 @@ namespace CustomSpawnpoints
             Logger.Log("CustomSpawnpoints has Loaded!");
         }
 
+        protected override void Unload()
+        {
+            Logger.Log("CustomSpawnpoints has Unloaded!");
+            UnturnedPlayerEvents.OnPlayerRevive -= UnturnedPlayerEvents_OnPlayerRevive;
+        }
+
         public override Rocket.API.Collections.TranslationList DefaultTranslations
         {
             get
@@ -52,6 +58,7 @@ namespace CustomSpawnpoints
             {
                 UnityEngine.Vector3 bedVector3;
                 byte bedAngle;
+
                 if (Configuration.Instance.PrioritizeBeds && hasBed(player.CSteamID, out bedVector3, out bedAngle))
                 {
                     teleportToBed(player, bedVector3, bedAngle);
@@ -80,15 +87,22 @@ namespace CustomSpawnpoints
 
         void teleportPlayerToSpawn(UnturnedPlayer player)
         {
+            SpawnPoint prioritySpawn;
+            if (PrioritySpawnEnabled() && PrioritySpawnIsValidSpawn(out prioritySpawn))
+            {
+                sleepAndToggleGodmode(player);
+
+                teleportPlayer(player, prioritySpawn);
+                return;
+            }
+
             var accessableSpawns = getSpawnsPlayerCanUse(player);
             if (accessableSpawns.Count == 0)
             {
                 return;
             }
 
-            setGodmode(true, player);
-            Thread.Sleep(Configuration.Instance.TeleportDelay);
-            setGodmode(false, player);
+            sleepAndToggleGodmode(player);
 
             if (Configuration.Instance.RandomlySelectSpawnPoint)
             {
@@ -98,6 +112,26 @@ namespace CustomSpawnpoints
             {
                 teleportPlayer(player, accessableSpawns[0]);
             }
+        }
+
+        void sleepAndToggleGodmode(UnturnedPlayer player)
+        {
+            setGodmode(true, player);
+            Thread.Sleep(Configuration.Instance.TeleportDelay);
+            setGodmode(false, player);
+        }
+
+        bool PrioritySpawnEnabled()
+        {
+            return Configuration.Instance.PrioritySpawnpointEnabled;
+        }
+
+        bool PrioritySpawnIsValidSpawn(out SpawnPoint spawn)
+        {
+            spawn = AllCustomSpawns.SavedSpawnPoints.FirstOrDefault(s => s.name.ToLower() == getPrioritySpawnName());
+
+            if (spawn == null) return false;
+            else return true;
         }
 
         void setGodmode(bool enableGod, UnturnedPlayer pl)
@@ -113,10 +147,9 @@ namespace CustomSpawnpoints
             }
         }
 
-        protected override void Unload()
+        string getPrioritySpawnName()
         {
-            Logger.Log("CustomSpawnpoints has Unloaded!");
-            UnturnedPlayerEvents.OnPlayerRevive -= UnturnedPlayerEvents_OnPlayerRevive;
+            return Configuration.Instance.PrioritySpawnName.ToLower();
         }
 
         List<SpawnPoint> getSpawnsPlayerCanUse(UnturnedPlayer p)
@@ -136,7 +169,7 @@ namespace CustomSpawnpoints
 
         void teleportPlayer(UnturnedPlayer P, SpawnPoint spawn)
         {
-            if (AllCustomSpawns.SavedSpawnPoints[0].Rotation != 0)
+            if (spawn.Rotation != 0)
             {
                 P.Teleport(new UnityEngine.Vector3
                 {
