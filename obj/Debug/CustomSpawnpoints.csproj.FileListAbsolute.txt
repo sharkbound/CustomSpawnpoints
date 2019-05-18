@@ -3,3 +3,9 @@ C:\Users\owner\Desktop\GitHub\RocketModPlugins\RocketModCustomSpawnpoints\Custom
 C:\Users\owner\Desktop\GitHub\RocketModPlugins\RocketModCustomSpawnpoints\CustomSpawnpoints\CustomSpawnpoints\bin\Debug\CustomSpawnpoints.pdb
 C:\Users\owner\Desktop\GitHub\RocketModPlugins\RocketModCustomSpawnpoints\CustomSpawnpoints\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.dll
 C:\Users\owner\Desktop\GitHub\RocketModPlugins\RocketModCustomSpawnpoints\CustomSpawnpoints\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.pdb
+D:\git\plugins\CustomSpawnpoints\bin\Debug\CustomSpawnpoints.dll
+D:\git\plugins\CustomSpawnpoints\bin\Debug\CustomSpawnpoints.pdb
+D:\git\plugins\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.csprojAssemblyReference.cache
+D:\git\plugins\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.csproj.CoreCompileInputs.cache
+D:\git\plugins\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.dll
+D:\git\plugins\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.pdb
