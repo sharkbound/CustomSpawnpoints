@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Rocket.API;
 using System.Xml.Serialization;
+using Steamworks;
 
 namespace CustomSpawnpoints
 {
@@ -16,7 +17,9 @@ namespace CustomSpawnpoints
         public bool PrioritySpawnpointEnabled;
         public string PrioritySpawnName;
         public int TeleportDelay;
+        public int SpawnedNextToBedDistance;
         public SpawnPoints Spawns;
+        public List<CSteamID> NoForcedBedSpawnPlayers;
 
         public void LoadDefaults()
         {
@@ -28,6 +31,7 @@ namespace CustomSpawnpoints
             PrioritySpawnName = "default";
             TeleportDelay = 1000;
             Spawns = new SpawnPoints();
+            SpawnedNextToBedDistance = 10;
         }
     }
 

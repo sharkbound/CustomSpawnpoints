@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Rocket.API;
+﻿using Rocket.API;
 using Rocket.Core.Logging;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
+using System.Collections.Generic;
 
 namespace CustomSpawnpoints
 {
@@ -18,7 +15,7 @@ namespace CustomSpawnpoints
 
         public AllowedCaller AllowedCaller
         {
-            get { return Rocket.API.AllowedCaller.Player; }
+            get { return AllowedCaller.Player; }
         }
 
         public void Execute(IRocketPlayer caller, string[] command)
@@ -32,14 +29,14 @@ namespace CustomSpawnpoints
             if (command.Length == 1 && command[0].ToLower() == "list")
             {
                 listSpawns(caller);
-            } 
+            }
             else if (command.Length == 2 && command[0].ToLower() == "add")
             {
                 addSpawn(command[1].ToLower(), (UnturnedPlayer)caller, caller);
             }
             else if (command.Length == 2 && command[0].ToLower() == "remove")
             {
-                removeSpawn((UnturnedPlayer)caller,  command[1].ToLower(), caller);
+                removeSpawn((UnturnedPlayer)caller, command[1].ToLower(), caller);
             }
             else
             {
@@ -70,7 +67,7 @@ namespace CustomSpawnpoints
             {
                 teleportToSpawnpoint(player, spawn.name);
             }
-            
+
         }
 
         bool checkIfSpawnExist(string spawnName)

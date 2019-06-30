@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Rocket.API;
+using Rocket.Core.Logging;
+using Rocket.Core.Plugins;
+using Rocket.Unturned.Chat;
+using Rocket.Unturned.Events;
+using Rocket.Unturned.Player;
+using SDG.Unturned;
+using Steamworks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Rocket.API;
-using Rocket.Core.Plugins;
-using Rocket.Core.Logging;
-using SDG.Unturned;
-using Rocket.Unturned.Events;
 using System.Threading;
-using Rocket.Unturned.Player;
-using Rocket.Core.Commands;
-using Steamworks;
 
 namespace CustomSpawnpoints
 {
@@ -46,79 +45,86 @@ namespace CustomSpawnpoints
                     {"list", "Name: {0}, X: {1}, Y: {2}, Z: {3}"},
                     {"wrong_usage", "Incorrect usage! Correct usage: <add || remove || list> [spawn name]"},
                     {"teleport_spawn", "Teleported to spawn {0}!"},
-                    {"no_spawns", "No custom spawn points found!"}
+                    {"no_spawns", "No custom spawn points found!"},
+                    {"forcebed_ignore_bed", "You will no longer be forced to spawn at your bed"},
+                    {"forcebed_use_bed", "You will spawn at your bed from now on, if priorizebed is enabled on the server"},
                 };
             }
         }
 
-        void UnturnedPlayerEvents_OnPlayerRevive(Rocket.Unturned.Player.UnturnedPlayer player, UnityEngine.Vector3 position, byte angle)
+        void UnturnedPlayerEvents_OnPlayerRevive(UnturnedPlayer player, UnityEngine.Vector3 position, byte angle)
         {
             if (Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0 || !Configuration.Instance.Enabled) return;
             new Thread(() =>
             {
-                UnityEngine.Vector3 bedVector3;
-                byte bedAngle;
-
-                if (Configuration.Instance.PrioritizeBeds && hasBed(player.CSteamID, out bedVector3, out bedAngle))
+                SpawnpointConfig config = Configuration.Instance;
+                if (config.PrioritizeBeds && !config.NoForcedBedSpawnPlayers.Contains(player.CSteamID) && HasBed(player.CSteamID, out UnityEngine.Vector3 bedVector3, out byte bedAngle))
                 {
-                    teleportToBed(player, bedVector3, bedAngle);
+                    TeleportToBed(player, bedVector3, bedAngle);
                 }
                 else
                 {
-                    teleportPlayerToSpawn(player);
+                    TeleportPlayerToSpawn(player);
                 }
             }
             ).Start();
         }
 
-        bool hasBed(CSteamID PlayerID, out UnityEngine.Vector3 Point, out byte angle)
+        bool HasBed(CSteamID PlayerID, out UnityEngine.Vector3 Point, out byte angle)
         {
             return BarricadeManager.tryGetBed(PlayerID, out Point, out angle);
         }
 
-        void teleportToBed(UnturnedPlayer player, UnityEngine.Vector3 bedPoint, byte bedAngle)
+        void TeleportToBed(UnturnedPlayer player, UnityEngine.Vector3 bedPoint, byte bedAngle)
         {
-            setGodmode(true, player);
+            SetGodmode(true, player);
             Thread.Sleep(Configuration.Instance.TeleportDelay);
-            setGodmode(false, player);
+            SetGodmode(false, player);
 
             player.Teleport(bedPoint, bedAngle);
+            UnturnedChat.Say(player, "you where spawned at your bed, do /forcebed to disable/enable this", UnityEngine.Color.yellow);
         }
 
-        void teleportPlayerToSpawn(UnturnedPlayer player)
+        void TeleportPlayerToSpawn(UnturnedPlayer player)
         {
-            SpawnPoint prioritySpawn;
-            if (PrioritySpawnEnabled() && PrioritySpawnIsValidSpawn(out prioritySpawn))
+            var config = Configuration.Instance;
+            if (HasBed(player.CSteamID, out var bedPos, out var bedAngle) && UnityEngine.Vector3.Distance(player.Position, bedPos) <= config.SpawnedNextToBedDistance)
             {
-                sleepAndToggleGodmode(player);
-
-                teleportPlayer(player, prioritySpawn);
+                UnturnedChat.Say($"skipped tp'ing player {player.CharacterName}");
                 return;
             }
 
-            var accessableSpawns = getSpawnsPlayerCanUse(player);
+            if (PrioritySpawnEnabled() && PrioritySpawnIsValidSpawn(out SpawnPoint prioritySpawn))
+            {
+                SleepAndToggleGodmode(player);
+
+                TeleportPlayer(player, prioritySpawn);
+                return;
+            }
+
+            List<SpawnPoint> accessableSpawns = GetSpawnsPlayerCanUse(player);
             if (accessableSpawns.Count == 0)
             {
                 return;
             }
 
-            sleepAndToggleGodmode(player);
+            SleepAndToggleGodmode(player);
 
             if (Configuration.Instance.RandomlySelectSpawnPoint)
             {
-                teleportPlayerRandom(player, accessableSpawns);
+                TeleportPlayerRandom(player, accessableSpawns);
             }
             else
             {
-                teleportPlayer(player, accessableSpawns[0]);
+                TeleportPlayer(player, accessableSpawns[0]);
             }
         }
 
-        void sleepAndToggleGodmode(UnturnedPlayer player)
+        void SleepAndToggleGodmode(UnturnedPlayer player)
         {
-            setGodmode(true, player);
+            SetGodmode(true, player);
             Thread.Sleep(Configuration.Instance.TeleportDelay);
-            setGodmode(false, player);
+            SetGodmode(false, player);
         }
 
         bool PrioritySpawnEnabled()
@@ -128,37 +134,30 @@ namespace CustomSpawnpoints
 
         bool PrioritySpawnIsValidSpawn(out SpawnPoint spawn)
         {
-            spawn = AllCustomSpawns.SavedSpawnPoints.FirstOrDefault(s => s.name.ToLower() == getPrioritySpawnName());
+            spawn = AllCustomSpawns.SavedSpawnPoints.FirstOrDefault(s => s.name.ToLower() == GetPrioritySpawnName());
 
             if (spawn == null) return false;
             else return true;
         }
 
-        void setGodmode(bool enableGod, UnturnedPlayer pl)
+        void SetGodmode(bool enableGod, UnturnedPlayer pl)
         {
             if (!Configuration.Instance.GiveGodModeOnRespawnUntilTeleport) return;
-            if (enableGod)
-            {
-                pl.Features.GodMode = true;
-            }
-            else
-            {
-                pl.Features.GodMode = false;
-            }
+            pl.Features.GodMode = enableGod;
         }
 
-        string getPrioritySpawnName()
+        string GetPrioritySpawnName()
         {
             return Configuration.Instance.PrioritySpawnName.ToLower();
         }
 
-        List<SpawnPoint> getSpawnsPlayerCanUse(UnturnedPlayer p)
+        List<SpawnPoint> GetSpawnsPlayerCanUse(UnturnedPlayer player)
         {
             List<SpawnPoint> spawnsPlayerCanUse = new List<SpawnPoint>();
-            
-            foreach (var spawn in Configuration.Instance.Spawns.SavedSpawnPoints)
+
+            foreach (SpawnPoint spawn in Configuration.Instance.Spawns.SavedSpawnPoints)
             {
-                if (p.HasPermission("spawnpoint.all") || p.HasPermission("spawnpoint." + spawn.name))
+                if (player.HasPermission("spawnpoint.all") || player.HasPermission("spawnpoint." + spawn.name))
                 {
                     spawnsPlayerCanUse.Add(spawn);
                 }
@@ -167,33 +166,21 @@ namespace CustomSpawnpoints
             return spawnsPlayerCanUse;
         }
 
-        void teleportPlayer(UnturnedPlayer P, SpawnPoint spawn)
+        void TeleportPlayer(UnturnedPlayer player, SpawnPoint spawn)
         {
-            if (spawn.Rotation != 0)
+            player.Teleport(new UnityEngine.Vector3
             {
-                P.Teleport(new UnityEngine.Vector3
-                {
-                    x = spawn.x,
-                    y = spawn.y,
-                    z = spawn.z
-                }, spawn.Rotation);
-            }
-            else
-            {
-                P.Teleport(new UnityEngine.Vector3
-                {
-                    x = spawn.x,
-                    y = spawn.y,
-                    z = spawn.z
-                }, P.Rotation);
-            }
+                x = spawn.x,
+                y = spawn.y,
+                z = spawn.z
+            }, spawn.Rotation != 0 ? spawn.Rotation : player.Rotation);
         }
 
-        void teleportPlayerRandom(UnturnedPlayer P, List<SpawnPoint> spawns)
+        void TeleportPlayerRandom(UnturnedPlayer P, List<SpawnPoint> spawns)
         {
             if (spawns.Count == 0) return;
 
-            SpawnPoint Randompoint = getRandomSpawn(spawns);
+            SpawnPoint Randompoint = GetRandomSpawn(spawns);
             if (Randompoint.Rotation != 0)
             {
                 P.Teleport(new UnityEngine.Vector3
@@ -214,7 +201,7 @@ namespace CustomSpawnpoints
             }
         }
 
-        SpawnPoint getRandomSpawn(List<SpawnPoint> list)
+        SpawnPoint GetRandomSpawn(List<SpawnPoint> list)
         {
             Random r = new Random();
             return list[r.Next(list.Count)]; //The return range for random.next doesnt

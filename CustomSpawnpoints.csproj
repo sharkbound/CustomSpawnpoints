@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandForceBed.cs" />
     <Compile Include="CommandSpawn.cs" />
     <Compile Include="SpawnpointConfig.cs" />
     <Compile Include="SpawnpointPlugin.cs" />
@@ -74,8 +75,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy /y  $(TargetPath) "D:\programs\unturned_server\steamapps\common\Unturned\Servers\dev\Rocket\Plugins"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

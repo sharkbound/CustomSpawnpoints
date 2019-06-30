@@ -1,0 +1,5 @@
+D:\git\CustomSpawnpoints\bin\Release\CustomSpawnpoints.dll
+D:\git\CustomSpawnpoints\bin\Release\CustomSpawnpoints.pdb
+D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.csproj.CoreCompileInputs.cache
+D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.dll
+D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.pdb
