@@ -12,6 +12,5 @@ D:\git\plugins\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.pdb
 D:\git\CustomSpawnpoints\bin\Debug\CustomSpawnpoints.dll
 D:\git\CustomSpawnpoints\bin\Debug\CustomSpawnpoints.pdb
 D:\git\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.csprojAssemblyReference.cache
-D:\git\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.csproj.CoreCompileInputs.cache
 D:\git\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.dll
 D:\git\CustomSpawnpoints\obj\Debug\CustomSpawnpoints.pdb
