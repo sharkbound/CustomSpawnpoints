@@ -32,26 +32,21 @@ namespace CustomSpawnpoints
             TeleportDelay = 1000;
             Spawns = new SpawnPoints();
             SpawnedNextToBedDistance = 10;
+            NoForcedBedSpawnPlayers = new List<CSteamID>();
         }
     }
 
     public class SpawnPoints
     {
-        [XmlArrayItem(ElementName = "spawn")]
-        public List<SpawnPoint> SavedSpawnPoints = new List<SpawnPoint>();
+        [XmlArrayItem(ElementName = "spawn")] public List<SpawnPoint> SavedSpawnPoints = new List<SpawnPoint>();
     }
 
     public class SpawnPoint
     {
-        [XmlAttribute("name")]
-        public string name;
-        [XmlAttribute("x")]
-        public float x;
-        [XmlAttribute("y")]
-        public float y;
-        [XmlAttribute("z")]
-        public float z;
-        [XmlAttribute("rotation")]
-        public float Rotation;
+        [XmlAttribute("name")] public string name;
+        [XmlAttribute("x")] public float x;
+        [XmlAttribute("y")] public float y;
+        [XmlAttribute("z")] public float z;
+        [XmlAttribute("rotation")] public float Rotation;
     }
 }

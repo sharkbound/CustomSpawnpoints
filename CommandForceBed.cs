@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CustomSpawnpoints
 {
-    class CommandForceBed : IRocketCommand
+    internal class CommandForceBed : IRocketCommand
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
 
@@ -19,11 +19,11 @@ namespace CustomSpawnpoints
 
         public List<string> Permissions => new List<string>();
 
-        private SpawnpointConfig Config => SpawnpointPlugin.Instance.Configuration.Instance;
+        private static SpawnpointConfig Config => SpawnpointPlugin.Instance.Configuration.Instance;
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            var player = (UnturnedPlayer)caller;
+            var player = (UnturnedPlayer) caller;
             if (player == null)
             {
                 return;
@@ -32,12 +32,14 @@ namespace CustomSpawnpoints
             if (Config.NoForcedBedSpawnPlayers.Contains(player.CSteamID))
             {
                 Config.NoForcedBedSpawnPlayers.Remove(player.CSteamID);
-                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_use_bed"), UnityEngine.Color.green);
+                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_use_bed"),
+                    UnityEngine.Color.green);
             }
             else
             {
                 Config.NoForcedBedSpawnPlayers.Add(player.CSteamID);
-                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_ignore_bed"), UnityEngine.Color.green);
+                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_ignore_bed"),
+                    UnityEngine.Color.green);
             }
 
             SpawnpointPlugin.Instance.Configuration.Save();

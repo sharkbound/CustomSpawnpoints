@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CustomSpawnpoints
 {
-    class CommandSpawn : IRocketCommand
+    internal class CommandSpawn : IRocketCommand
     {
         public List<string> Aliases
         {
@@ -54,13 +54,14 @@ namespace CustomSpawnpoints
             }
         }
         #region methods
-        void updateSpawnsList()
+
+        private void updateSpawnsList()
         {
             SpawnpointPlugin.Instance.Configuration.Save();
             SpawnpointPlugin.AllCustomSpawns = SpawnpointPlugin.Instance.Configuration.Instance.Spawns;
         }
 
-        void tryTpToSpawn(UnturnedPlayer player, string spawnName)
+        private void tryTpToSpawn(UnturnedPlayer player, string spawnName)
         {
             var spawn = getSpawnByName(spawnName);
             if (spawn != null)
@@ -70,7 +71,7 @@ namespace CustomSpawnpoints
 
         }
 
-        bool checkIfSpawnExist(string spawnName)
+        private bool checkIfSpawnExist(string spawnName)
         {
             spawnName = spawnName.ToLower();
             foreach (var spawn in SpawnpointPlugin.AllCustomSpawns.SavedSpawnPoints)
@@ -81,7 +82,7 @@ namespace CustomSpawnpoints
             return false;
         }
 
-        SpawnPoint getSpawnByName(string spawnName)
+        private SpawnPoint getSpawnByName(string spawnName)
         {
             spawnName = spawnName.ToLower();
 
@@ -93,7 +94,7 @@ namespace CustomSpawnpoints
             return null;
         }
 
-        void sendMSG(string msg, IRocketPlayer caller)
+        private void sendMSG(string msg, IRocketPlayer caller)
         {
             if (caller is ConsolePlayer)
             {
@@ -105,7 +106,7 @@ namespace CustomSpawnpoints
             }
         }
 
-        void addSpawn(string enteredName, UnturnedPlayer player, IRocketPlayer caller)
+        private void addSpawn(string enteredName, UnturnedPlayer player, IRocketPlayer caller)
         {
             if (checkIfSpawnExist(enteredName))
             {
@@ -129,7 +130,7 @@ namespace CustomSpawnpoints
             updateSpawnsList();
         }
 
-        void removeSpawn(UnturnedPlayer player, string spawnName, IRocketPlayer caller)
+        private void removeSpawn(UnturnedPlayer player, string spawnName, IRocketPlayer caller)
         {
             SpawnPoint toRemove = getSpawnByName(spawnName);
 
@@ -145,7 +146,7 @@ namespace CustomSpawnpoints
             }
         }
 
-        void listSpawns(IRocketPlayer caller)
+        private void listSpawns(IRocketPlayer caller)
         {
             if (SpawnpointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0)
             {
@@ -159,7 +160,7 @@ namespace CustomSpawnpoints
             }
         }
 
-        void teleportToSpawnpoint(UnturnedPlayer uCaller, string name)
+        private void teleportToSpawnpoint(UnturnedPlayer uCaller, string name)
         {
             SpawnPoint spawnpoint = getSpawnByName(name);
             var spawnVector = new UnityEngine.Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z);
