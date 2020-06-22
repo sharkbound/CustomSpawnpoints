@@ -3,3 +3,11 @@ D:\git\CustomSpawnpoints\bin\Release\CustomSpawnpoints.pdb
 D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.dll
 D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.pdb
 D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.csprojAssemblyReference.cache
+D:\git\CustomSpawnpoints\bin\Release\Assembly-CSharp-firstpass.dll
+D:\git\CustomSpawnpoints\bin\Release\Assembly-CSharp.dll
+D:\git\CustomSpawnpoints\bin\Release\Rocket.API.dll
+D:\git\CustomSpawnpoints\bin\Release\Rocket.Core.dll
+D:\git\CustomSpawnpoints\bin\Release\Rocket.Unturned.dll
+D:\git\CustomSpawnpoints\bin\Release\UnityEngine.CoreModule.dll
+D:\git\CustomSpawnpoints\bin\Release\UnityEngine.dll
+D:\git\CustomSpawnpoints\obj\Release\CustomSpawnpoints.csproj.CopyComplete

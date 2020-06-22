@@ -49,12 +49,12 @@ namespace CustomSpawnpoints
 
         public static string GetPrioritySpawnName() => SpawnPointPlugin.Config.PrioritySpawnName.ToLower();
 
-        public static void SetGodmode(bool enableGod, UnturnedPlayer pl)
+        public static void SetGodmode(bool enableGod, UnturnedPlayer player)
         {
             if (!SpawnPointPlugin.Config.GiveGodModeOnRespawnUntilTeleport) return;
-            pl.Features.GodMode = enableGod;
+            player.Features.GodMode = enableGod;
         }
-         // todo: fix bed check
+
         public static void TeleportPlayerToSpawn(UnturnedPlayer player)
         {
             if (BarricadeManager.tryGetBed(player.CSteamID, out var bedPos, out _) &&

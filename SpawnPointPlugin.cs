@@ -24,14 +24,22 @@ namespace CustomSpawnpoints
         {
             Instance = this;
             AllCustomSpawns = Configuration.Instance.Spawns;
-            UnturnedPlayerEvents.OnPlayerRevive += UnturnedPlayerEvents_OnPlayerRevive;
+
+            if (Config.Enabled)
+            {
+                UnturnedPlayerEvents.OnPlayerRevive += UnturnedPlayerEvents_OnPlayerRevive;
+            }
+
             Logger.Log("CustomSpawnpoints has Loaded!");
         }
 
         protected override void Unload()
         {
             Logger.Log("CustomSpawnpoints has Unloaded!");
-            UnturnedPlayerEvents.OnPlayerRevive -= UnturnedPlayerEvents_OnPlayerRevive;
+            if (Config.Enabled)
+            {
+                UnturnedPlayerEvents.OnPlayerRevive -= UnturnedPlayerEvents_OnPlayerRevive;
+            }
         }
 
         public override TranslationList DefaultTranslations { get; } =
@@ -62,8 +70,13 @@ namespace CustomSpawnpoints
             SpawnPointUtils.SetGodmode(false, player);
 
             if (Config.PrioritizeBeds && !Config.NoForcedBedSpawnPlayers.Contains(player.CSteamID) &&
-                BarricadeManager.tryGetBed(player.CSteamID, out _, out _))
+                BarricadeManager.tryGetBed(player.CSteamID, out var bedPos, out _))
             {
+                if (Vector3.Distance(bedPos, player.Position) <= Config.SpawnedNextToBedDistance)
+                {
+                    yield break;
+                }
+
                 player.Player.teleportToBed();
                 UnturnedChat.Say(player, Translate("spawned_at_bed"), Color.yellow);
             }

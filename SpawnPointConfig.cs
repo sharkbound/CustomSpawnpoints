@@ -29,9 +29,9 @@ namespace CustomSpawnpoints
             PrioritizeBeds = true;
             PrioritySpawnpointEnabled = false;
             PrioritySpawnName = "default";
-            TeleportDelay = 1000;
+            TeleportDelay = 2;
             Spawns = new SpawnPoints();
-            SpawnedNextToBedDistance = 10;
+            SpawnedNextToBedDistance = 20;
             NoForcedBedSpawnPlayers = new List<CSteamID>();
         }
     }
