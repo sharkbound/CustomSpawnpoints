@@ -22,7 +22,7 @@ namespace CustomSpawnpoints
         {
             if (command.Length == 0)
             {
-                UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("wrong_usage"));
+                UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("wrong_usage"));
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace CustomSpawnpoints
                     }
                 }
 
-                UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("wrong_usage"));
+                UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("wrong_usage"));
                 return;
             }
         }
@@ -57,8 +57,8 @@ namespace CustomSpawnpoints
 
         private void updateSpawnsList()
         {
-            SpawnpointPlugin.Instance.Configuration.Save();
-            SpawnpointPlugin.AllCustomSpawns = SpawnpointPlugin.Instance.Configuration.Instance.Spawns;
+            SpawnPointPlugin.Instance.Configuration.Save();
+            SpawnPointPlugin.AllCustomSpawns = SpawnPointPlugin.Instance.Configuration.Instance.Spawns;
         }
 
         private void tryTpToSpawn(UnturnedPlayer player, string spawnName)
@@ -74,7 +74,7 @@ namespace CustomSpawnpoints
         private bool checkIfSpawnExist(string spawnName)
         {
             spawnName = spawnName.ToLower();
-            foreach (var spawn in SpawnpointPlugin.AllCustomSpawns.SavedSpawnPoints)
+            foreach (var spawn in SpawnPointPlugin.AllCustomSpawns.SavedSpawnPoints)
             {
                 if (spawn.name == spawnName) return true;
             }
@@ -86,7 +86,7 @@ namespace CustomSpawnpoints
         {
             spawnName = spawnName.ToLower();
 
-            foreach (var spawn in SpawnpointPlugin.AllCustomSpawns.SavedSpawnPoints)
+            foreach (var spawn in SpawnPointPlugin.AllCustomSpawns.SavedSpawnPoints)
             {
                 if (spawn.name == spawnName) return spawn;
             }
@@ -111,12 +111,12 @@ namespace CustomSpawnpoints
             if (checkIfSpawnExist(enteredName))
             {
                 string nameOfSpawn = getSpawnByName(enteredName).name;
-                UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("spawn_already_exist", nameOfSpawn));
+                UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("spawn_already_exist", nameOfSpawn));
                 return;
             }
 
             UnturnedPlayer uP = (UnturnedPlayer)caller;
-            SpawnpointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Add(new SpawnPoint
+            SpawnPointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Add(new SpawnPoint
             {
                 name = enteredName,
                 x = uP.Position.x,
@@ -125,7 +125,7 @@ namespace CustomSpawnpoints
                 Rotation = uP.Rotation
             });
 
-            UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("spawn_added", enteredName));
+            UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("spawn_added", enteredName));
 
             updateSpawnsList();
         }
@@ -136,27 +136,27 @@ namespace CustomSpawnpoints
 
             if (toRemove != null)
             {
-                SpawnpointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Remove(toRemove);
+                SpawnPointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Remove(toRemove);
                 updateSpawnsList();
-                sendMSG(SpawnpointPlugin.Instance.Translate("removed_spawn", toRemove.name), caller);
+                sendMSG(SpawnPointPlugin.Instance.Translate("removed_spawn", toRemove.name), caller);
             }
             else
             {
-                sendMSG(SpawnpointPlugin.Instance.Translate("spawn_not_found", spawnName), caller);
+                sendMSG(SpawnPointPlugin.Instance.Translate("spawn_not_found", spawnName), caller);
             }
         }
 
         private void listSpawns(IRocketPlayer caller)
         {
-            if (SpawnpointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0)
+            if (SpawnPointPlugin.Instance.Configuration.Instance.Spawns.SavedSpawnPoints.Count == 0)
             {
-                UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("no_spawns"));
+                UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("no_spawns"));
                 return;
             }
 
-            foreach (var point in SpawnpointPlugin.AllCustomSpawns.SavedSpawnPoints)
+            foreach (var point in SpawnPointPlugin.AllCustomSpawns.SavedSpawnPoints)
             {
-                UnturnedChat.Say(caller, SpawnpointPlugin.Instance.Translate("list", point.name, point.x, point.y, point.z));
+                UnturnedChat.Say(caller, SpawnPointPlugin.Instance.Translate("list", point.name, point.x, point.y, point.z));
             }
         }
 
@@ -166,7 +166,7 @@ namespace CustomSpawnpoints
             var spawnVector = new UnityEngine.Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z);
 
             uCaller.Teleport(spawnVector, spawnpoint.Rotation);
-            UnturnedChat.Say(uCaller, SpawnpointPlugin.Instance.Translate("teleport_spawn", spawnpoint.name));
+            UnturnedChat.Say(uCaller, SpawnPointPlugin.Instance.Translate("teleport_spawn", spawnpoint.name));
         }
         #endregion
 

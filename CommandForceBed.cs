@@ -19,7 +19,7 @@ namespace CustomSpawnpoints
 
         public List<string> Permissions => new List<string>();
 
-        private static SpawnpointConfig Config => SpawnpointPlugin.Instance.Configuration.Instance;
+        private static SpawnPointConfig Config => SpawnPointPlugin.Instance.Configuration.Instance;
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -32,17 +32,17 @@ namespace CustomSpawnpoints
             if (Config.NoForcedBedSpawnPlayers.Contains(player.CSteamID))
             {
                 Config.NoForcedBedSpawnPlayers.Remove(player.CSteamID);
-                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_use_bed"),
+                UnturnedChat.Say(player, SpawnPointPlugin.Instance.Translate("forcebed_use_bed"),
                     UnityEngine.Color.green);
             }
             else
             {
                 Config.NoForcedBedSpawnPlayers.Add(player.CSteamID);
-                UnturnedChat.Say(player, SpawnpointPlugin.Instance.Translate("forcebed_ignore_bed"),
+                UnturnedChat.Say(player, SpawnPointPlugin.Instance.Translate("forcebed_ignore_bed"),
                     UnityEngine.Color.green);
             }
 
-            SpawnpointPlugin.Instance.Configuration.Save();
+            SpawnPointPlugin.Instance.Configuration.Save();
         }
     }
 }

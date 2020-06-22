@@ -8,7 +8,7 @@ using Steamworks;
 
 namespace CustomSpawnpoints
 {
-    public class SpawnpointConfig : IRocketPluginConfiguration
+    public class SpawnPointConfig : IRocketPluginConfiguration
     {
         public bool Enabled;
         public bool GiveGodModeOnRespawnUntilTeleport;
@@ -16,7 +16,7 @@ namespace CustomSpawnpoints
         public bool PrioritizeBeds;
         public bool PrioritySpawnpointEnabled;
         public string PrioritySpawnName;
-        public int TeleportDelay;
+        public float TeleportDelay;
         public int SpawnedNextToBedDistance;
         public SpawnPoints Spawns;
         public List<CSteamID> NoForcedBedSpawnPlayers;
